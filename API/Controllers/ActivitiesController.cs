@@ -1,42 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Activities;
 using Application.Activities.Command.CreateActivity;
-using Application.Activities.Query.GetAcitivities;
+using Application.Activities.Command.UpdateActivity;
+using Application.Activities.Query.GetActivities;
 using Application.Activities.Query.GetActivity;
-using Domain;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
     public class ActivitiesController : BaseApiController
     {
-        private readonly DataContext _context;
-
-        public ActivitiesController()
-        {
-        }
-
         [HttpGet]
-        public async Task<ActionResult<List<Activity>>> GetActivities()
+        public async Task<ActionResult<List<ActivityDto>>> GetActivities()
         {
             return await Mediator.Send(new GetActivitiesQuery());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Activity>> GetActivity(Guid id)
+        public async Task<ActionResult<ActivityDto>> GetActivity(Guid id)
         {
-            return await Mediator.Send(new GetActivityQuery{ Id = id});
+            return await Mediator.Send(new GetActivityQuery { Id = id });
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateActivity(Activity activity)
+        public async Task<ActionResult> CreateActivity(CreateActivityCommand command)
         {
-            return Ok(await Mediator.Send(new CreateActivityCommand{ Activity = activity}));
+            return Created(nameof(GetActivity),new { id = await Mediator.Send(command)});
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateActivity(Guid id, UpdateActivityCommand command)
+        {
+            command.Id = id;
+            await Mediator.Send(command);
+            return NoContent();
         }
 
     }

@@ -7,18 +7,21 @@ using Domain;
 using MediatR;
 using Persistence;
 
-namespace Application.Activities.Command.CreateActivity
+namespace Application.Activities.Command.UpdateActivity
 {
-    public class CreateActivityCommand : IRequest<Guid>, IMapTo<Activity>
+    public class UpdateActivityCommand : IRequest, IMapTo<Activity>
     {
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }
         public string City { get; set; }
         public string Venue { get; set; }
+
     }
-    public class Handler : IRequestHandler<CreateActivityCommand, Guid>
+
+    public class Handler : IRequestHandler<UpdateActivityCommand>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -28,17 +31,15 @@ namespace Application.Activities.Command.CreateActivity
             this._context = context;
         }
 
-        public async Task<Guid> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
         {
-            var entity = new Activity();
+            var entity = await _context.Activities.FindAsync(request.Id);
 
             _mapper.Map(request, entity);
 
-            _context.Activities.Add(entity);
-
             await _context.SaveChangesAsync();
 
-            return entity.Id;
+            return Unit.Value;
         }
     }
 }
