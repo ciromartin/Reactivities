@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Activities.Command.CreateActivity;
+using Application.Activities.Command.DeleteActivity;
 using Application.Activities.Command.UpdateActivity;
 using Application.Activities.Query.GetActivities;
 using Application.Activities.Query.GetActivity;
@@ -26,7 +27,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateActivity(CreateActivityCommand command)
         {
-            return Created(nameof(GetActivity),new { id = await Mediator.Send(command)});
+            return Created(nameof(GetActivity), new { id = await Mediator.Send(command) });
         }
 
         [HttpPut("{id}")]
@@ -34,6 +35,13 @@ namespace API.Controllers
         {
             command.Id = id;
             await Mediator.Send(command);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteActivity(Guid id)
+        {
+            await Mediator.Send(new DeleteActivityCommand { Id = id });
             return NoContent();
         }
 
