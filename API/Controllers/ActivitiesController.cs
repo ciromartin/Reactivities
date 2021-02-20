@@ -27,7 +27,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateActivity(CreateActivityCommand command)
         {
-            return Created(nameof(GetActivity), new { id = await Mediator.Send(command) });
+            return Created(nameof(GetActivity), await Mediator.Send(command));
         }
 
         [HttpPut("{id}")]
