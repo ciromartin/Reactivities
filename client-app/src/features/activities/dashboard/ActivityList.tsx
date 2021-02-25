@@ -1,3 +1,4 @@
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { Fragment } from "react";
 import { Header, Item, Segment } from "semantic-ui-react";
@@ -15,8 +16,8 @@ export default observer(function ActivityList() {
           <Header sub color="teal">
             {group}
           </Header>
-          {activities.map((activity) => (
-            <ActivityListItem activity={activity} />
+          {(activities).map((activity) => (
+            <ActivityListItem key={activity.id} activity={activity} />
           ))}
         </Fragment>
       ))}

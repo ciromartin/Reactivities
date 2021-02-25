@@ -18,7 +18,7 @@ export default class ActivityStore {
     }
 
     get groupedByDateActivities() {
-        return Object.entries(
+        return Object.entries(            
             this.activitiesOrderedByDate.reduce((activities, activity)=> {
                 const date = activity.date;
                 activities[date] = activities[date] ? [...activities[date], activity] : [activity];
@@ -44,7 +44,7 @@ export default class ActivityStore {
     loadActivity = async (id: string) => {
         let activity = this.getActivity(id);
         if (activity) {
-            this.setSelectedActivity(activity);
+            this.setOrAddActivity(activity);
             return activity;
         }
         else {
@@ -80,7 +80,7 @@ export default class ActivityStore {
     }
 
     setSelectedActivity = (activity: Activity) => {
-        this.selectedActivity = activity;
+        this.selectedActivity = this.setActivityDate(activity);
     }
 
     private setActivityDate = (activity: Activity) => {
@@ -89,15 +89,12 @@ export default class ActivityStore {
     }
 
     setOrAddActivity = (activity: Activity) => {
-        activity = this.setActivityDate(activity);
-        this.activityRegistry.set(activity.id, activity);
+        this.activityRegistry.set(activity.id, this.setActivityDate(activity));
     }
 
     getActivities = () => {
         return toJS(this.activityRegistry);
     }
-
-
 
     createActivity = async (activity: Activity) => {
         this.setLoading(true);
