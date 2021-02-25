@@ -1,31 +1,25 @@
-import { observer } from 'mobx-react-lite';
-import React, { Fragment } from 'react'
-import { Header, Item, Segment } from 'semantic-ui-react';
-import { useStore } from '../../../app/stores/store';
-import ActivityListItem from './ActivityListItem'
+import { observer } from "mobx-react-lite";
+import React, { Fragment } from "react";
+import { Header, Item, Segment } from "semantic-ui-react";
+import { useStore } from "../../../app/stores/store";
+import ActivityListItem from "./ActivityListItem";
 
-export default observer(function ActivityList(){
+export default observer(function ActivityList() {
+  const { activityStore } = useStore();
+  const { groupedByDateActivities } = activityStore;
 
-    const {activityStore} = useStore();
-    const {groupedByDateActivities} = activityStore;
-
-    return (
-        <>
-            {groupedByDateActivities.map(([group, activities]) => (
-               <Fragment key={group}>
-                   <Header sub color='teal' >
-                        {group}
-                   </Header>
-                   <Segment>
-                        <Item.Group divided>
-                            {activities.map(activity => (
-                                <ActivityListItem activity={activity} />
-                            ))}
-                        </Item.Group>
-                    </Segment>
-               </Fragment> 
-            ))}
-        </>
-
-    )
-})
+  return (
+    <>
+      {groupedByDateActivities.map(([group, activities]) => (
+        <Fragment key={group}>
+          <Header sub color="teal">
+            {group}
+          </Header>
+          {activities.map((activity) => (
+            <ActivityListItem activity={activity} />
+          ))}
+        </Fragment>
+      ))}
+    </>
+  );
+});
