@@ -23,7 +23,6 @@ export default observer(function ActivityForm() {
   });
 
   useEffect(() => {
-    console.log('useEffect', activity)
     if(id) loadActivity(id).then(activity => {
       console.log('useEffect load', activity)
       setActivity(activity!)

@@ -8,7 +8,6 @@ import ActivityDetailedHeader from './ActivityDetailedHeader'
 import ActivityDetailedChat from './ActivityDetailedChat'
 import ActivityDetailedInfo from './ActivityDetailedInfo'
 import ActivityDetailedSideBar from './ActivityDetailedSideBar'
-import { toJS } from "mobx";
 
 export default observer(function ActivityDetail() {
 
