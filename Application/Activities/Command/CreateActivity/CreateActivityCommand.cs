@@ -1,7 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Mappings;
+using Application.Common.Core;
+using Application.Common.Mappings;
 using AutoMapper;
 using Domain;
 using MediatR;
@@ -9,7 +10,7 @@ using Persistence;
 
 namespace Application.Activities.Command.CreateActivity
 {
-    public class CreateActivityCommand : IRequest<Guid>, IMapTo<Activity>
+    public class CreateActivityCommand : IRequest<Result<Guid>>, IMapTo<Activity>
     {
         public string Title { get; set; }
         public DateTime Date { get; set; }
@@ -18,7 +19,8 @@ namespace Application.Activities.Command.CreateActivity
         public string City { get; set; }
         public string Venue { get; set; }
     }
-    public class Handler : IRequestHandler<CreateActivityCommand, Guid>
+
+    public class Handler : IRequestHandler<CreateActivityCommand, Result<Guid>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -28,7 +30,7 @@ namespace Application.Activities.Command.CreateActivity
             this._context = context;
         }
 
-        public async Task<Guid> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
         {
             var entity = new Activity();
 
@@ -36,9 +38,11 @@ namespace Application.Activities.Command.CreateActivity
 
             _context.Activities.Add(entity);
 
-            await _context.SaveChangesAsync();
+            var success = await _context.SaveChangesAsync() > 0;
 
-            return entity.Id;
+            if(!success) return Result<Guid>.Failure(new Error() { Title = nameof(CreateActivityCommand), Description = "Activity not created"});
+
+            return Result<Guid>.Success(entity.Id);            
         }
     }
 }

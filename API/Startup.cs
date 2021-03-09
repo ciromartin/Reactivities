@@ -1,4 +1,6 @@
 using Application;
+using Application.Activities.Command.CreateActivity;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +26,7 @@ namespace API
             services.AddPersistence(_config);
             services.AddApplication();
 
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation();
             
             services.AddSwaggerGen(c =>
             {

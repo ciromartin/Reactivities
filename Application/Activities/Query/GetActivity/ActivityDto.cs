@@ -1,5 +1,5 @@
 using System;
-using Application.Mappings;
+using Application.Common.Mappings;
 using Domain;
 
 namespace Application.Activities.Query.GetActivity

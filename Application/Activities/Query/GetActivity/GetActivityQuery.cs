@@ -1,18 +1,19 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Core;
 using AutoMapper;
 using MediatR;
 using Persistence;
 
 namespace Application.Activities.Query.GetActivity
 {
-    public class GetActivityQuery : IRequest<ActivityDto>
+    public class GetActivityQuery : IRequest<Result<ActivityDto>>
     {
         public Guid Id { get; set; }
     }
 
-    public class Handler : IRequestHandler<GetActivityQuery, ActivityDto>
+    public class Handler : IRequestHandler<GetActivityQuery, Result<ActivityDto>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -23,12 +24,12 @@ namespace Application.Activities.Query.GetActivity
             this._context = context;
         }
 
-        public async Task<ActivityDto> Handle(GetActivityQuery request, CancellationToken cancellationToken)
+        public async Task<Result<ActivityDto>> Handle(GetActivityQuery request, CancellationToken cancellationToken)
         {
             var entity = await _context.Activities
                 .FindAsync(request.Id);
 
-            return _mapper.Map<ActivityDto>(entity);
+            return Result<ActivityDto>.Success(_mapper.Map<ActivityDto>(entity));
         }
     }
 }
