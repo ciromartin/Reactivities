@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { makeAutoObservable, toJS } from 'mobx'
 import agent from '../api/agent';
 import { Activity } from '../models/activity'
@@ -7,20 +8,20 @@ export default class ActivityStore {
     selectedActivity: Activity | undefined = undefined;
     editMode = false;
     loading = false;
-    loadingInitial = true;
+    loadingInitial = false;
 
     constructor() {
         makeAutoObservable(this)
     }
 
     get activitiesOrderedByDate() {
-        return Array.from(this.activityRegistry.values()).sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+        return Array.from(this.activityRegistry.values()).sort((a, b) => a.date!.getTime() - b.date!.getTime());
     }
 
     get groupedByDateActivities() {
         return Object.entries(            
             this.activitiesOrderedByDate.reduce((activities, activity)=> {
-                const date = activity.date;
+                const date = format(activity.date!, 'dd MMM yyyy');
                 activities[date] = activities[date] ? [...activities[date], activity] : [activity];
                 return activities;
             }, {} as {[key: string]: Activity[]})
@@ -45,6 +46,7 @@ export default class ActivityStore {
         let activity = this.getActivity(id);
         if (activity) {
             this.setOrAddActivity(activity);
+            this.setSelectedActivity(activity);
             return activity;
         }
         else {
@@ -56,7 +58,7 @@ export default class ActivityStore {
                 this.setLoadingInitial(false);
                 return this.getActivity(id);
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 this.setLoadingInitial(false);
             }
         }
@@ -84,7 +86,7 @@ export default class ActivityStore {
     }
 
     private setActivityDate = (activity: Activity) => {
-        activity.date = activity.date.split("T")[0];
+        activity.date = new Date(activity.date!);
         return activity;
     }
 

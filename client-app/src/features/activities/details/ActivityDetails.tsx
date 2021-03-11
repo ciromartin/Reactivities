@@ -19,7 +19,8 @@ export default observer(function ActivityDetail() {
     if (id) loadActivity(id);
   }, [id, loadActivity])
 
-  if (loadingInitial || !activity) return <LoadingComponent/>;
+
+  if (loadingInitial || !activity?.id) return <LoadingComponent/>;
   
   return (
     <Grid>
