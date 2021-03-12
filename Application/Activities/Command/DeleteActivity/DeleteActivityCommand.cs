@@ -2,8 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Core;
+using Application.Common.Interfaces;
 using MediatR;
-using Persistence;
 
 namespace Application.Activities.Command.DeleteActivity
 {
@@ -14,8 +14,8 @@ namespace Application.Activities.Command.DeleteActivity
 
     public class Handler : IRequestHandler<DeleteActivityCommand, Result<Unit>>
     {
-        private readonly DataContext _context;
-        public Handler(DataContext context)
+        private readonly IApplicationDbContext _context;
+        public Handler(IApplicationDbContext context)
         {
             this._context = context;
         }
@@ -26,9 +26,9 @@ namespace Application.Activities.Command.DeleteActivity
 
             if (entity == null) return Result<Unit>.Failure(new Error { Title = nameof(DeleteActivityCommand), Description = $"doesn't exists activity id: '{request.Id}'" });
 
-            _context.Remove(entity);
+            _context.Activities.Remove(entity);
 
-            var success = await _context.SaveChangesAsync() > 0;
+            var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             if(!success) return Result<Unit>.Failure(new Error { Title = nameof(DeleteActivityCommand), Description = $"couldn't delete activity id: '{request.Id}'"});
 

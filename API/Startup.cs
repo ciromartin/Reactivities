@@ -1,9 +1,12 @@
+using API.Extensions;
 using API.Middleware;
 using Application;
 using Application.Activities.Command.CreateActivity;
+using Domain;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +29,7 @@ namespace API
         {
             services.AddPersistence(_config);
             services.AddApplication();
+            services.AddIdentityServices(_config);
 
             services.AddControllers().AddFluentValidation();
             

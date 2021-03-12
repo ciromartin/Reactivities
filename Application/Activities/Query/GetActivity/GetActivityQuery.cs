@@ -2,9 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Core;
+using Application.Common.Interfaces;
 using AutoMapper;
 using MediatR;
-using Persistence;
 
 namespace Application.Activities.Query.GetActivity
 {
@@ -15,10 +15,10 @@ namespace Application.Activities.Query.GetActivity
 
     public class Handler : IRequestHandler<GetActivityQuery, Result<ActivityDto>>
     {
-        private readonly DataContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public Handler(DataContext context, IMapper mapper)
+        public Handler(IApplicationDbContext context, IMapper mapper)
         {
             this._mapper = mapper;
             this._context = context;

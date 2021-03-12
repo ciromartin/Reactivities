@@ -2,11 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Core;
+using Application.Common.Interfaces;
 using Application.Common.Mappings;
 using AutoMapper;
 using Domain;
 using MediatR;
-using Persistence;
 
 namespace Application.Activities.Command.UpdateActivity
 {
@@ -24,9 +24,9 @@ namespace Application.Activities.Command.UpdateActivity
 
     public class Handler : IRequestHandler<UpdateActivityCommand, Result<Unit>>
     {
-        private readonly DataContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public Handler(DataContext context, IMapper mapper)
+        public Handler(IApplicationDbContext context, IMapper mapper)
         {
             this._mapper = mapper;
             this._context = context;
@@ -40,7 +40,7 @@ namespace Application.Activities.Command.UpdateActivity
 
             _mapper.Map(request, entity);
 
-            var success = await _context.SaveChangesAsync() > 0;
+            var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             if(!success) return Result<Unit>.Failure(new Error { Title = nameof(UpdateActivityCommand), Description = $"couldn't update activity id: '{request.Id}'"});
 

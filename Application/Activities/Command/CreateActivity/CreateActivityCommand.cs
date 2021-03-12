@@ -2,11 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Core;
+using Application.Common.Interfaces;
 using Application.Common.Mappings;
 using AutoMapper;
 using Domain;
 using MediatR;
-using Persistence;
 
 namespace Application.Activities.Command.CreateActivity
 {
@@ -22,9 +22,9 @@ namespace Application.Activities.Command.CreateActivity
 
     public class Handler : IRequestHandler<CreateActivityCommand, Result<Guid>>
     {
-        private readonly DataContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public Handler(DataContext context, IMapper mapper)
+        public Handler(IApplicationDbContext context, IMapper mapper)
         {
             this._mapper = mapper;
             this._context = context;
@@ -38,7 +38,7 @@ namespace Application.Activities.Command.CreateActivity
 
             _context.Activities.Add(entity);
 
-            var success = await _context.SaveChangesAsync() > 0;
+            var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             if(!success) return Result<Guid>.Failure(new Error() { Title = nameof(CreateActivityCommand), Description = "Activity not created"});
 

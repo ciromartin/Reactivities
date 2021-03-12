@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Activities.Query.GetActivity;
 using Application.Common.Core;
+using Application.Common.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace Application.Activities.Query.GetActivities
 {
@@ -16,10 +16,10 @@ namespace Application.Activities.Query.GetActivities
     public class Handler : IRequestHandler<GetActivitiesQuery, Result<List<ActivityDto>>>
     {
 
-        private readonly DataContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public Handler(DataContext context, IMapper mapper)
+        public Handler(IApplicationDbContext context, IMapper mapper)
         {
             this._mapper = mapper;
             this._context = context;
